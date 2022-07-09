@@ -51,21 +51,6 @@ CREATE TABLE IF NOT EXISTS transportation_events (
     ON UPDATE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS shipping_items (
-  _item_num INT UNIQUE NOT NULL AUTO_INCREMENT,
-  _weight FLOAT NULL,
-  _dimensions FLOAT NULL,
-  _insuarance FLOAT NULL,
-  _destination INT NOT NULL,
-  _delivery_date DATE NULL,
-  PRIMARY KEY (_item_num),
-  CONSTRAINT fk_shipping_items_destination
-    FOREIGN KEY (_destination)
-    REFERENCES locations (_id)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE
-);
-
 CREATE TABLE IF NOT EXISTS shipments (
   _id INT NOT NULL AUTO_INCREMENT,
   _item INT NOT NULL,
@@ -76,10 +61,26 @@ CREATE TABLE IF NOT EXISTS shipments (
     FOREIGN KEY (_trans_event)
     REFERENCES transportation_events (_scheduleNumber)
     ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT fk_shipment_item
-    FOREIGN KEY (_item)
-    REFERENCES shipping_items (_item_num)
-    ON DELETE CASCADE
     ON UPDATE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS shipping_items (
+  _item_num INT UNIQUE NOT NULL AUTO_INCREMENT,
+  _weight FLOAT NULL,
+  _dimensions FLOAT NULL,
+  _insuarance FLOAT NULL,
+  _destination INT NOT NULL,
+  _delivery_date DATE NULL,
+  _shipment INT,
+  PRIMARY KEY (_item_num),
+  CONSTRAINT fk_shipping_items_destination
+    FOREIGN KEY (_destination)
+    REFERENCES locations (_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT fk_shipping_items_shipment
+    FOREIGN KEY (_shipment)
+    REFERENCES shipments (_id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+); 
